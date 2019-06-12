@@ -37,7 +37,7 @@ export default {
     },
     created:function(){
         
-        this.addVideo('OYJ3ycwSlik');
+        
     },
     methods:{
 
