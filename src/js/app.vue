@@ -1,9 +1,9 @@
 <template>
     <div class="container-fluid">
-        <b-input-group class="my-3" prepend="YouTube">
+        <b-input-group class="my-3" prepend="YouTube" size="sm">
             <b-form-input v-model="url" placeholder="ID, or URL, or Short URL" @keydown.enter="addVideo()"></b-form-input>
             <b-input-group-append>
-                <b-button size="sm" text="submit" variant="primary" @click="addVideo()">Go</b-button>
+                <b-button @click="addVideo()">Enter</b-button>
             </b-input-group-append>
         </b-input-group>
         <div class="form-row my-3">
@@ -22,6 +22,26 @@
                 <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
             </div>
         </div>
+    
+        <div class="d-flex">
+            <div class="mr-1 flex-grow-1">
+                <b-input-group class="" prepend="Share" size="sm">
+                    <b-form-input v-model="exportUrl" :id="exportUrlId" disabled></b-form-input>
+                    <b-input-group-append>
+                        <b-button variant="secondary" @click="copyUrl()">Copy URL</b-button>
+                    </b-input-group-append>
+                </b-input-group>
+            </div>
+            <div class="ml-auto mx-1 p-2 small">
+                Version: {{ version }}
+            </div>
+            <div class="ml-1">
+                <a href="https://github.com/oceanxdds/yt_monitor" target="_blank">
+                    <img src="images/theme/GitHub-Mark-32px.png">
+                </a>
+            </div>
+        </div>
+    
     </div>
 </template>
 
@@ -34,18 +54,29 @@
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
+const yt_monitor_host = "https://oceanxdds.github.io/yt_monitor";
 
 export default {
     data:function(){
         return {
+            version:'190613',
             url:'',
+            exportUrlId:'expUrl',
             videos:[]
         }
     },
     computed:{
         orderedVideos:function(){
             return this.videos.sort((a,b)=>(a.order-b.order));
-        }
+        },
+        hash:function(){
+            
+            return '#'+this.orderedVideos.map(x=>x.code).join(',');
+        },
+        exportUrl:function(){
+
+            return yt_monitor_host +'/'+ this.hash;
+        },
     },
     created:function(){
         
@@ -161,7 +192,23 @@ export default {
         },
         updateHash:function(){
             
-            window.location.hash = '#' + this.orderedVideos.map(x=>x.code).join(',');
+            window.location.hash = this.hash;
+        },
+        copyUrl:function(){
+
+            let TextRange = document.createRange();
+
+            TextRange.selectNode(document.getElementById(this.exportUrlId));
+
+            let sel = window.getSelection();
+
+            sel.removeAllRanges();
+
+            sel.addRange(TextRange);
+
+            document.execCommand("copy");
+            
+            sel.removeAllRanges();
         }
     }
 }
