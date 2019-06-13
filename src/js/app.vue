@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <b-input-group class="my-3" prepend="Source" size="sm">
-            <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL." @keydown.enter="addVideo()"></b-form-input>
+            <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL. [ Facebook ] fb:ID:VideoID or URL." @keydown.enter="addVideo()"></b-form-input>
             <b-input-group-append>
                 <b-button @click="addVideo()">Enter</b-button>
             </b-input-group-append>
@@ -9,7 +9,8 @@
         <div class="form-row my-3">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in orderedVideos" :key="v.code">
                 <div class="d-flex border py-1">
-                    <div class="p-1 mx-1">{{ v.type }}:{{ v.code }}</div>
+    
+                    <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
                     <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
                     <div class="mx-1">
                         <b-button-group>
@@ -57,6 +58,8 @@ const yt_short_host = "https://youtu.be";
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
 const tt_host = "https://www.twitch.tv";
 const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
+const fb_host = "https://www.facebook.com";
+const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=";
 
 export default {
     data:function(){
@@ -116,6 +119,11 @@ export default {
                             url2 = tt_embed_channel_host+code;
                             type = 'tt';
                         }
+                        else if(temp.length==3&&temp[0]=='fb'){
+                            code = temp[1]+':'+temp[2];
+                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
+                            type = 'fb';
+                        }
                         else{
                             url2 = yt_embed_host+'/'+code;
                             type = 'yt';
@@ -158,6 +166,19 @@ export default {
                             code = temp[0];
                             url2 = tt_embed_channel_host+code;
                             type = 'tt';
+                        }
+                    }
+                }
+
+                if(!code)
+                {
+                    if(u.match(fb_host))
+                    {
+                        if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_]+)\/videos\/(\d+)/))
+                        {
+                            code = temp[1]+':'+temp[2];
+                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
+                            type = 'fb';
                         }
                     }
                 }
