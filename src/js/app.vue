@@ -33,7 +33,7 @@
 
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
-const yt_embed_host = "https://www.youtube.com/embed";
+const yt_embed_host = "https://www.youtube-nocookie.com/embed";
 
 export default {
     data:function(){
