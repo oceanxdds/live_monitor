@@ -3,17 +3,23 @@
         <b-input-group class="my-3" prepend="YouTube">
             <b-form-input v-model="url" placeholder="ID, or URL, or Short URL"></b-form-input>
             <b-input-group-append>
-                <b-button size="sm" text="Button" variant="primary" @click="addVideo()">Go</b-button>
+                <b-button size="sm" text="submit" variant="primary" @click="addVideo()">Go</b-button>
             </b-input-group-append>
         </b-input-group>
         <div class="form-row my-3">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in videos" :key="v.code">
-                <div class="border">
-                    {{ v.code }}
-                    <b-button variant="secondary" size="sm" @click="focusVideo(v.code)">Focus</b-button>
-                    <b-button variant="danger" size="sm" @click="removeVideo(v.code)">&times;</b-button>
-                    <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in orderedVideos" :key="v.code">
+                <div class="d-flex border py-1">
+                    <div class="p-1 mx-1">{{ v.code }}</div>
+                    <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
+                    <div class="mx-1">
+                        <b-button-group>
+                            <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
+                            <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
+                        </b-button-group>
+                    </div>
+                    <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&times;</b-button></div>
                 </div>
+                <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
             </div>
         </div>
     </div>
@@ -27,6 +33,7 @@
 
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
+const yt_embed_host = "https://www.youtube.com/embed";
 
 export default {
     data:function(){
@@ -35,65 +42,126 @@ export default {
             videos:[]
         }
     },
+    computed:{
+        orderedVideos:function(){
+            return this.videos.sort((a,b)=>(a.order-b.order));
+        }
+    },
     created:function(){
         
-        
+        if(window.location.hash)
+            this.addVideo(window.location.hash.substr(1));
     },
     methods:{
 
-        addVideo:function(code){
+        addVideo:function(url){
             
-            let temp = '';
+            url = url ? url : this.url;
 
-            if(!code){
+            url.split(/ |,/).filter(x=>x).forEach(u=>{
 
-                if(temp = this.url.match(/^[a-zA-Z0-9]+$/))
+                let code = '';
+                let temp = '';
+                
+                if(!code)
                 {
-                    code = temp[0];
-                }
-            }
-
-            if(!code)
-            {
-                if(this.url.match(yt_host))
-                {
-                    if(temp = this.url.replace(yt_host,"").match(/v=[a-zA-Z0-9]+/))
-                    {
-                        code = temp[0].replace('v=','');
-                    }
-                }
-            }
-
-            if(!code)
-            {
-                if(this.url.match(yt_short_host))
-                {
-                    if(temp = this.url.replace(yt_short_host,"").match(/[a-zA-Z0-9]+/))
+                    if(temp = u.match(/^[a-zA-Z0-9-_]+$/))
                     {
                         code = temp[0];
                     }
                 }
+
+                if(!code)
+                {
+                    if(u.match(yt_host))
+                    {
+                        if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_]+/))
+                        {
+                            code = temp[0].replace('v=','');
+                        }
+                    }
+                }
+
+                if(!code)
+                {
+                    if(u.match(yt_short_host))
+                    {
+                        if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_]+/))
+                        {
+                            code = temp[0];
+                        }
+                    }
+                }
+
+                if(!code)
+                    return;
+
+                if(this.videos.filter(v=>v.code==code).length>0)
+                    return ;
+                
+                this.videos.push({
+                    code:code,
+                    focus:false,
+                    url:yt_embed_host+'/'+code,
+                    order:this.videos.length
+                });
+            });
+
+            this.url = '';
+
+            this.updateHash();
+        },
+        removeVideo:function(video){
+
+            this.videos = this.videos.filter(v=>v.code!=video.code);
+
+            this.updateOrder();
+            this.updateHash();
+        },
+        focusVideo:function(video){
+
+            this.videos.map(v=>{v.focus=(v.code==video.code)&&!v.focus});
+        },
+        moveLeft:function(video){
+
+            if(video.order!=0){
+
+                let index = video.order;
+                let left,right;
+                this.videos.forEach(v=>{
+                    if(v.order==index-1) left = v;
+                    if(v.order==index)   right = v;
+                });
+                left.order = index;
+                right.order = index-1;
             }
 
-            if(!code)
-                return;
-
-            if(this.videos.filter(v=>v.code==code).length>0)
-                return ;
-
-            this.videos.push({
-                code:code,
-                focus:false,
-                url:'https://www.youtube.com/embed/'+code
-            });
+            this.updateHash();
         },
-        removeVideo:function(code){
+        moveRight:function(video){
 
-            this.videos = this.videos.filter(v=>v.code!=code);
+            if(video.order!=this.videos.length-1){
+
+                let index = video.order;
+                let left,right;
+                this.videos.forEach(v=>{
+                    if(v.order==index)    left = v;
+                    if(v.order==index+1)  right = v;
+                });
+                left.order = index+1;
+                right.order = index;
+            }
+            
+            this.updateHash();
         },
-        focusVideo:function(code){
+        updateOrder:function(){
 
-            this.videos.map(v=>{v.focus=(v.code==code)&&!v.focus});
+            let order=0;
+            this.orderedVideos.forEach(v=>{v.order=order++});
+        },
+        updateHash:function(){
+            
+            window.location.hash = '#' + this.orderedVideos.map(x=>x.code).join(',');
         }
     }
 }
