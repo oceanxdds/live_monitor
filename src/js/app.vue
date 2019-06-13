@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <b-input-group class="my-3" prepend="YouTube" size="sm">
-            <b-form-input v-model="url" placeholder="ID, or URL, or Short URL" @keydown.enter="addVideo()"></b-form-input>
+        <b-input-group class="my-3" prepend="Source" size="sm">
+            <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL." @keydown.enter="addVideo()"></b-form-input>
             <b-input-group-append>
                 <b-button @click="addVideo()">Enter</b-button>
             </b-input-group-append>
@@ -9,7 +9,7 @@
         <div class="form-row my-3">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in orderedVideos" :key="v.code">
                 <div class="d-flex border py-1">
-                    <div class="p-1 mx-1">{{ v.code }}</div>
+                    <div class="p-1 mx-1">{{ v.type }}:{{ v.code }}</div>
                     <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
                     <div class="mx-1">
                         <b-button-group>
@@ -51,10 +51,12 @@
 
 <script>
 
+const yt_monitor_host = "https://oceanxdds.github.io/yt_monitor";
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
-const yt_monitor_host = "https://oceanxdds.github.io/yt_monitor";
+const tt_host = "https://www.twitch.tv";
+const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
 
 export default {
     data:function(){
@@ -71,7 +73,7 @@ export default {
         },
         hash:function(){
             
-            return '#'+this.orderedVideos.map(x=>x.code).join(',');
+            return '#'+this.orderedVideos.map(v=>v.type+':'+v.code).join(',');
         },
         exportUrl:function(){
 
@@ -93,12 +95,31 @@ export default {
 
                 let code = '';
                 let temp = '';
-                
+                let url2 = '';
+                let type = '';
+
                 if(!code)
                 {
-                    if(temp = u.match(/^[a-zA-Z0-9-_]+$/))
+                    if(temp = u.match(/^[a-zA-Z0-9-_:]+$/))
                     {
                         code = temp[0];
+                        temp = code.split(':');
+
+                        if(temp.length==2&&temp[0]=='yt'){
+                            code = temp[1];
+                            url2 = yt_embed_host+'/'+code;
+                            type = 'yt';
+                        }
+                        else if(temp.length==2&&temp[0]=='tt')
+                        {
+                            code = temp[1];
+                            url2 = tt_embed_channel_host+code;
+                            type = 'tt';
+                        }
+                        else{
+                            url2 = yt_embed_host+'/'+code;
+                            type = 'yt';
+                        }
                     }
                 }
 
@@ -109,6 +130,8 @@ export default {
                         if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_]+/))
                         {
                             code = temp[0].replace('v=','');
+                            url2 = yt_embed_host+'/'+code;
+                            type = 'yt';
                         }
                     }
                 }
@@ -120,6 +143,21 @@ export default {
                         if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_]+/))
                         {
                             code = temp[0];
+                            url2 = yt_embed_host+'/'+code;
+                            type = 'yt';
+                        }
+                    }
+                }
+
+                if(!code)
+                {
+                    if(u.match(tt_host))
+                    {
+                        if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_]+/))
+                        {
+                            code = temp[0];
+                            url2 = tt_embed_channel_host+code;
+                            type = 'tt';
                         }
                     }
                 }
@@ -133,7 +171,8 @@ export default {
                 this.videos.push({
                     code:code,
                     focus:false,
-                    url:yt_embed_host+'/'+code,
+                    url:url2,
+                    type:type,
                     order:this.videos.length
                 });
             });
