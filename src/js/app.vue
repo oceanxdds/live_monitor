@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <b-input-group class="my-3" prepend="YouTube">
-            <b-form-input v-model="url" placeholder="ID, or URL, or Short URL"></b-form-input>
+            <b-form-input v-model="url" placeholder="ID, or URL, or Short URL" @keydown.enter="addVideo()"></b-form-input>
             <b-input-group-append>
                 <b-button size="sm" text="submit" variant="primary" @click="addVideo()">Go</b-button>
             </b-input-group-append>
