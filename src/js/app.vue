@@ -130,7 +130,7 @@ export default {
 
                 if(!code)
                 {
-                    if(temp = u.match(/^[a-zA-Z0-9-_:]+$/))
+                    if(temp = u.match(/^[a-zA-Z0-9-_:.]+$/))
                     {
                         code = temp[0];
                         temp = code.split(':');
@@ -170,7 +170,7 @@ export default {
 
                 if(!code && u.match(yt_host))
                 {
-                    if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_]+/))
+                    if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_.]+/))
                     {
                         code = temp[0].replace('v=','');
                         url2 = yt_embed_host+'/'+code;
@@ -180,7 +180,7 @@ export default {
 
                 if(!code && u.match(yt_short_host))
                 {
-                    if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_]+/))
+                    if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_.]+/))
                     {
                         code = temp[0];
                         url2 = yt_embed_host+'/'+code;
@@ -190,7 +190,7 @@ export default {
 
                 if(!code && u.match(tt_host))
                 {
-                    if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_]+/))
+                    if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_.]+/))
                     {
                         code = temp[0];
                         url2 = tt_embed_channel_host+code;
@@ -200,7 +200,7 @@ export default {
 
                 if(!code && u.match(fb_host))
                 {
-                    if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_]+)\/videos\/(\d+)/))
+                    if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_.]+)\/videos\/(\d+)/))
                     {
                         code = temp[1]+':'+temp[2];
                         url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
