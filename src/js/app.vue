@@ -13,7 +13,7 @@
 
     <div class="container-fluid">
         
-        <div class="form-row py-3">
+        <div class="form-row py-3" v-if="ordered_videos.length">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in ordered_videos" :key="v.code">
                 <div class="d-flex border py-1">
     
@@ -29,6 +29,10 @@
                 </div>
                 <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
             </div>
+        </div>
+
+        <div v-else class="py-5 text-center text-secondary">
+            <h6>Watch YouTube, Twitch, Facebook videos in one page.</h6>
         </div>
     </div>
 
@@ -49,9 +53,12 @@
                 <div class="ml-auto mx-1 p-2 small">
                     Version: {{ version }}
                 </div>
+                <div class="mx-1">
+                    <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Law">
+                 </div>
                 <div class="ml-1">
                     <a href="https://github.com/oceanxdds/yt_monitor" target="_blank">
-                        <img src="images/theme/GitHub-Mark-32px.png">
+                        <img src="images/theme/GitHub-Mark-32px.png" title="GitHub">
                     </a>
                 </div>
             </div>
