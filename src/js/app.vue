@@ -1,13 +1,20 @@
 <template>
+<div>
+    <div class="shadow-sm">
+        <div class="container-fluid wm-1140 py-2">
+            <b-input-group prepend="Source" size="sm">
+                <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL. [ Facebook ] fb:ID:VideoID or URL." @keydown.enter="addVideo()"></b-form-input>
+                <b-input-group-append>
+                    <b-button @click="addVideo()">Enter</b-button>
+                </b-input-group-append>
+            </b-input-group>
+        </div>
+    </div>
+
     <div class="container-fluid">
-        <b-input-group class="my-3" prepend="Source" size="sm">
-            <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL. [ Facebook ] fb:ID:VideoID or URL." @keydown.enter="addVideo()"></b-form-input>
-            <b-input-group-append>
-                <b-button @click="addVideo()">Enter</b-button>
-            </b-input-group-append>
-        </b-input-group>
-        <div class="form-row my-3">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in orderedVideos" :key="v.code">
+        
+        <div class="form-row py-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in ordered_videos" :key="v.code">
                 <div class="d-flex border py-1">
     
                     <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
@@ -23,31 +30,40 @@
                 <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
             </div>
         </div>
-    
-        <div class="d-flex">
-            <div class="mr-1 flex-grow-1">
-                <b-input-group class="" prepend="Share" size="sm">
-                    <b-form-input v-model="exportUrl" :id="exportUrlId" disabled></b-form-input>
-                    <b-input-group-append>
-                        <b-button variant="secondary" @click="copyUrl()">Copy URL</b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </div>
-            <div class="ml-auto mx-1 p-2 small">
-                Version: {{ version }}
-            </div>
-            <div class="ml-1">
-                <a href="https://github.com/oceanxdds/yt_monitor" target="_blank">
-                    <img src="images/theme/GitHub-Mark-32px.png">
-                </a>
+    </div>
+
+    <div class="">
+        <div class="container-fluid wm-1140 py-2">
+            <b-input-group class="" prepend="Share" size="sm">
+                <b-form-input v-model="export_url" :id="exportUrlId" disabled></b-form-input>
+                <b-input-group-append>
+                    <b-button variant="secondary" @click="copyUrl()">Copy URL</b-button>
+                </b-input-group-append>
+            </b-input-group>
+        </div>
+        <div class="container py-2">
+            <div class="d-flex">
+                <div class="mr-1 flex-grow-1">
+                    
+                </div>
+                <div class="ml-auto mx-1 p-2 small">
+                    Version: {{ version }}
+                </div>
+                <div class="ml-1">
+                    <a href="https://github.com/oceanxdds/yt_monitor" target="_blank">
+                        <img src="images/theme/GitHub-Mark-32px.png">
+                    </a>
+                </div>
             </div>
         </div>
-    
     </div>
+</div>
 </template>
 
 <style>
 [v-cloak] { display: none;}
+.wm-1140{ max-width:1140px; }
+.bg-custom{ background-color:#f0f0f0; }
 </style>
 
 <script>
@@ -64,21 +80,22 @@ const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=";
 export default {
     data:function(){
         return {
-            version:'190613',
+            version:'190614',
             url:'',
             exportUrlId:'expUrl',
             videos:[]
         }
     },
     computed:{
-        orderedVideos:function(){
+        ordered_videos:function(){
+
             return this.videos.sort((a,b)=>(a.order-b.order));
         },
         hash:function(){
             
-            return '#'+this.orderedVideos.map(v=>v.type+':'+v.code).join(',');
+            return '#'+this.videos.map(v=>v.type+':'+v.code).join(',');
         },
-        exportUrl:function(){
+        export_url:function(){
 
             return yt_monitor_host +'/'+ this.hash;
         },
@@ -215,40 +232,34 @@ export default {
         },
         moveLeft:function(video){
 
-            if(video.order!=0){
+            let index = video.order;
 
-                let index = video.order;
-                let left,right;
-                this.videos.forEach(v=>{
-                    if(v.order==index-1) left = v;
-                    if(v.order==index)   right = v;
-                });
-                left.order = index;
-                right.order = index-1;
-            }
+            if(index==0)
+                return ;
 
+            [this.videos[index-1],this.videos[index]]
+            = [this.videos[index],this.videos[index-1]];
+
+            this.updateOrder();
             this.updateHash();
         },
         moveRight:function(video){
 
-            if(video.order!=this.videos.length-1){
+            let index = video.order;
 
-                let index = video.order;
-                let left,right;
-                this.videos.forEach(v=>{
-                    if(v.order==index)    left = v;
-                    if(v.order==index+1)  right = v;
-                });
-                left.order = index+1;
-                right.order = index;
-            }
-            
+            if(index==this.videos.length-1)
+                return ;
+
+            [this.videos[index],this.videos[index+1]]
+            = [this.videos[index+1],this.videos[index]];
+
+            this.updateOrder();
             this.updateHash();
         },
         updateOrder:function(){
 
             let order=0;
-            this.orderedVideos.forEach(v=>{v.order=order++});
+            this.videos.forEach(v=>{v.order=order++});
         },
         updateHash:function(){
             
@@ -263,9 +274,7 @@ export default {
             let sel = window.getSelection();
 
             sel.removeAllRanges();
-
             sel.addRange(TextRange);
-
             document.execCommand("copy");
             
             sel.removeAllRanges();
