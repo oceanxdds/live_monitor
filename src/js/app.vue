@@ -15,19 +15,20 @@
         
         <div class="form-row py-3" v-if="ordered_videos.length">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in ordered_videos" :key="v.code">
-                <div class="d-flex border py-1">
-    
-                    <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
-                    <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
-                    <div class="mx-1">
-                        <b-button-group>
-                            <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
-                            <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
-                        </b-button-group>
+                <div class="border">
+                    <div class="d-flex py-1">
+                        <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
+                        <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
+                        <div class="mx-1">
+                            <b-button-group>
+                                <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
+                                <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
+                            </b-button-group>
+                        </div>
+                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&times;</b-button></div>
                     </div>
-                    <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&times;</b-button></div>
+                    <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
                 </div>
-                <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
             </div>
         </div>
 
