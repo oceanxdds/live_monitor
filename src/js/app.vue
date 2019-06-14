@@ -102,6 +102,8 @@ export default {
     },
     created:function(){
         
+        document.title = 'YT Monitor.';
+
         if(window.location.hash)
             this.addVideo(window.location.hash.substr(1));
     },
