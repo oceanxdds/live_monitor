@@ -3,7 +3,7 @@
     <div class="shadow-sm">
         <div class="container-fluid wm-1140 py-2">
             <b-input-group prepend="Source" size="sm">
-                <b-form-input v-model="url" placeholder="[ YouTube ] yt:ID or URL or Short URL. [ Twitch ] tt:ID or URL. [ Facebook ] fb:ID:VideoID or URL." @keydown.enter="addVideo()"></b-form-input>
+                <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                 <b-input-group-append>
                     <b-button @click="addVideo()">Enter</b-button>
                 </b-input-group-append>
@@ -33,7 +33,8 @@
         </div>
 
         <div v-else class="py-5 text-center text-secondary">
-            <h6>Watch YouTube, Twitch, Facebook videos in one page.</h6>
+            <h6>Watch Live from YouTube, Twitch, Facebook, Livestream in one page.</h6>
+
         </div>
     </div>
 
@@ -84,13 +85,14 @@ const tt_host = "https://www.twitch.tv";
 const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
 const fb_host = "https://www.facebook.com";
 const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=";
+const ls_host = "https://livestream.com";
 
 export default {
     data:function(){
         return {
             version:'190614',
             url:'',
-            exportUrlId:'expUrl',
+            exportUrlId:'expUrlId',
             videos:[]
         }
     },
@@ -149,6 +151,16 @@ export default {
                             url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
                             type = 'fb';
                         }
+                        else if(temp.length==3&&temp[0]=='ls'){
+                            code = temp[1]+':'+temp[2];
+                            url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/player';
+                            type = 'ls';
+                        }
+                        else if(temp.length==4&&temp[0]=='ls'){
+                            code = temp[1]+':'+temp[2]+':'+temp[3];
+                            url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/videos/'+temp[3]+'/player';
+                            type = 'ls';
+                        }
                         else{
                             url2 = yt_embed_host+'/'+code;
                             type = 'yt';
@@ -156,55 +168,63 @@ export default {
                     }
                 }
 
-                if(!code)
+                if(!code && u.match(yt_host))
                 {
-                    if(u.match(yt_host))
+                    if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_]+/))
                     {
-                        if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_]+/))
-                        {
-                            code = temp[0].replace('v=','');
-                            url2 = yt_embed_host+'/'+code;
-                            type = 'yt';
-                        }
+                        code = temp[0].replace('v=','');
+                        url2 = yt_embed_host+'/'+code;
+                        type = 'yt';
                     }
                 }
 
-                if(!code)
+                if(!code && u.match(yt_short_host))
                 {
-                    if(u.match(yt_short_host))
+                    if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_]+/))
                     {
-                        if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_]+/))
-                        {
-                            code = temp[0];
-                            url2 = yt_embed_host+'/'+code;
-                            type = 'yt';
-                        }
+                        code = temp[0];
+                        url2 = yt_embed_host+'/'+code;
+                        type = 'yt';
                     }
                 }
 
-                if(!code)
+                if(!code && u.match(tt_host))
                 {
-                    if(u.match(tt_host))
+                    if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_]+/))
                     {
-                        if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_]+/))
-                        {
-                            code = temp[0];
-                            url2 = tt_embed_channel_host+code;
-                            type = 'tt';
-                        }
+                        code = temp[0];
+                        url2 = tt_embed_channel_host+code;
+                        type = 'tt';
                     }
                 }
 
-                if(!code)
+                if(!code && u.match(fb_host))
                 {
-                    if(u.match(fb_host))
+                    if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_]+)\/videos\/(\d+)/))
                     {
-                        if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_]+)\/videos\/(\d+)/))
-                        {
-                            code = temp[1]+':'+temp[2];
-                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
-                            type = 'fb';
-                        }
+                        code = temp[1]+':'+temp[2];
+                        url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
+                        type = 'fb';
+                    }
+                }
+
+                if(!code && u.match(ls_host))
+                {
+                    if(temp = u.replace(ls_host,"").match(/accounts\/(\d+)\/events\/(\d+)\/videos\/(\d+)/))
+                    {
+                        code = temp[1]+':'+temp[2]+':'+temp[3];
+                        url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/videos/'+temp[3]+'/player';
+                        type = 'ls';
+                    }
+                }
+
+                if(!code && u.match(ls_host))
+                {
+                    if(temp = u.replace(ls_host,"").match(/accounts\/(\d+)\/events\/(\d+)/))
+                    {
+                        code = temp[1]+':'+temp[2];
+                        url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/player';
+                        type = 'ls';
                     }
                 }
 
