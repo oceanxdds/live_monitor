@@ -58,7 +58,7 @@
                     <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Law">
                  </div>
                 <div class="ml-1">
-                    <a href="https://github.com/oceanxdds/yt_monitor" target="_blank">
+                    <a href="https://github.com/oceanxdds/live_monitor" target="_blank">
                         <img src="images/theme/GitHub-Mark-32px.png" title="GitHub">
                     </a>
                 </div>
@@ -76,7 +76,7 @@
 
 <script>
 
-const yt_monitor_host = "https://oceanxdds.github.io/yt_monitor";
+const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
@@ -105,7 +105,7 @@ export default {
         },
         export_url:function(){
 
-            return yt_monitor_host +'/'+ this.hash;
+            return live_monitor_host +'/'+ this.hash;
         },
     },
     created:function(){
@@ -236,7 +236,7 @@ export default {
         },
         focusVideo:function(video){
 
-            this.videos.map(v=>{v.focus=(v.code==video.code)&&!v.focus});
+            this.videos.forEach(v=>{v.focus=(v.code==video.code)&&!v.focus});
         },
         moveLeft:function(video){
 
