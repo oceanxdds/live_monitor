@@ -24,7 +24,7 @@
                                 <b-button variant="secondary" size="sm" @click="moveRight(index)">&gt;</b-button>
                             </b-button-group>
                         </div>
-                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(index)">&times;</b-button></div>
+                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(index)">&#10005;</b-button></div>
                     </div>
                     <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
                 </div>
