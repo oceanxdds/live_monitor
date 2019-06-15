@@ -13,7 +13,7 @@
 
     <div class="container-fluid">
         <div class="form-row py-3" v-if="videos.length">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="(v,index) in videos" :key="v.code">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus,'order-first':v.focus}" v-for="(v,index) in videos" :key="v.code">
                 <div class="border my-1">
                     <div class="d-flex py-1">
                         <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
