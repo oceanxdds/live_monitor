@@ -2,7 +2,7 @@ const mix = require('laravel-mix');
 //require('laravel-mix-bundle-analyzer');
 require('laravel-mix-polyfill');
 
-mix.js('src/js/app.js','dist/js/bundle.js')
+mix.js('src/js/index.js','dist/js/bundle.js')
     //.sass('src/scss/app.scss','dist/css/app.css')
     .options({
         processCssUrls: false

@@ -1,7 +1,7 @@
 <template>
 <div>
     <div class="shadow-sm">
-        <div class="container-fluid wm-1140 py-2">
+        <div class="container-fluid mw-1140 py-2">
             <b-input-group prepend="Source" size="sm">
                 <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                 <b-input-group-append>
@@ -12,34 +12,31 @@
     </div>
 
     <div class="container-fluid">
-        
-        <div class="form-row py-3" v-if="ordered_videos.length">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="v in ordered_videos" :key="v.code">
-                <div class="border">
+        <div class="form-row py-3" v-if="videos.length">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" v-for="(v,index) in videos" :key="v.code">
+                <div class="border my-1">
                     <div class="d-flex py-1">
                         <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
                         <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">Focus</b-button></div>
                         <div class="mx-1">
                             <b-button-group>
-                                <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
-                                <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
+                                <b-button variant="secondary" size="sm" @click="moveLeft(index)">&lt;</b-button>
+                                <b-button variant="secondary" size="sm" @click="moveRight(index)">&gt;</b-button>
                             </b-button-group>
                         </div>
-                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&times;</b-button></div>
+                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(index)">&times;</b-button></div>
                     </div>
                     <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
                 </div>
             </div>
         </div>
-
         <div v-else class="py-5 text-center text-secondary">
             <h6>Watch Live from YouTube, Twitch, Facebook, Livestream in one page.</h6>
-
         </div>
     </div>
 
     <div class="">
-        <div class="container-fluid wm-1140 py-2">
+        <div class="container-fluid mw-1140 py-2">
             <b-input-group class="" prepend="Share" size="sm">
                 <b-form-input v-model="export_url" :id="exportUrlId" disabled></b-form-input>
                 <b-input-group-append>
@@ -56,7 +53,7 @@
                     Version: {{ version }}
                 </div>
                 <div class="mx-1">
-                    <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Law">
+                    <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
                  </div>
                 <div class="ml-1">
                     <a href="https://github.com/oceanxdds/live_monitor" target="_blank">
@@ -71,7 +68,7 @@
 
 <style>
 [v-cloak] { display: none;}
-.wm-1140{ max-width:1140px; }
+.mw-1140{ max-width:1140px; }
 .bg-custom{ background-color:#f0f0f0; }
 </style>
 
@@ -90,17 +87,19 @@ const ls_host = "https://livestream.com";
 export default {
     data:function(){
         return {
-            version:'190614',
+            version:'190615',
             url:'',
             exportUrlId:'expUrlId',
             videos:[]
         }
     },
-    computed:{
-        ordered_videos:function(){
+    watch:{
+        hash:function(){
 
-            return this.videos.sort((a,b)=>(a.order-b.order));
-        },
+            window.location.hash = this.hash;
+        }
+    },
+    computed:{
         hash:function(){
             
             return '#'+this.videos.map(v=>v.type+':'+v.code).join(',');
@@ -238,60 +237,33 @@ export default {
                     code:code,
                     focus:false,
                     url:url2,
-                    type:type,
-                    order:this.videos.length
+                    type:type
                 });
             });
 
             this.url = '';
-
-            this.updateHash();
         },
-        removeVideo:function(video){
+        removeVideo:function(index){
 
-            this.videos = this.videos.filter(v=>v.code!=video.code);
-
-            this.updateOrder();
-            this.updateHash();
+            this.videos.splice(index,1);
         },
         focusVideo:function(video){
 
             this.videos.forEach(v=>{v.focus=(v.code==video.code)&&!v.focus});
         },
-        moveLeft:function(video){
-
-            let index = video.order;
+        moveLeft:function(index){
 
             if(index==0)
                 return ;
 
-            [this.videos[index-1],this.videos[index]]
-            = [this.videos[index],this.videos[index-1]];
-
-            this.updateOrder();
-            this.updateHash();
+            this.videos.splice(index-1,0,this.videos.splice(index,1)[0]);
         },
-        moveRight:function(video){
-
-            let index = video.order;
+        moveRight:function(index){
 
             if(index==this.videos.length-1)
                 return ;
 
-            [this.videos[index],this.videos[index+1]]
-            = [this.videos[index+1],this.videos[index]];
-
-            this.updateOrder();
-            this.updateHash();
-        },
-        updateOrder:function(){
-
-            let order=0;
-            this.videos.forEach(v=>{v.order=order++});
-        },
-        updateHash:function(){
-            
-            window.location.hash = this.hash;
+            this.videos.splice(index,0,this.videos.splice(index+1,1)[0]);
         },
         copyUrl:function(){
 
