@@ -7,6 +7,9 @@
                 <b-input-group-append>
                     <b-button @click="addVideo()">Enter</b-button>
                 </b-input-group-append>
+                <b-input-group-append>
+                    <b-button size="sm" variant="success" @click="syncLive()">Sync Live</b-button>
+                </b-input-group-append>
             </b-input-group>
         </div>
     </div>
@@ -47,7 +50,7 @@
         <div class="container py-2">
             <div class="d-flex">
                 <div class="mr-1 flex-grow-1">
-                    <b-button size="sm" variant="success" @click="syncLive()">Sync Live</b-button>
+                    
                 </div>
                 <div class="ml-auto mx-1 p-2 small">
                     Version: {{ version }}
