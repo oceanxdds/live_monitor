@@ -2,15 +2,21 @@
 <div>
     <div class="shadow-sm">
         <div class="container-fluid mw-1140 py-2">
-            <b-input-group prepend="Source" size="sm">
-                <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
-                <b-input-group-append>
-                    <b-button @click="addVideo()">Enter</b-button>
-                </b-input-group-append>
-                <b-input-group-append>
+            <div class="d-flex">
+                <div class="mr-1">
                     <b-button size="sm" variant="success" @click="syncLive()">Sync Live</b-button>
-                </b-input-group-append>
-            </b-input-group>
+                </div>
+                <div class="ml-1 flex-grow-1">
+                    <b-input-group prepend="Source" size="sm">
+                        <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
+                        <b-input-group-append>
+                            <b-button @click="addVideo()">Enter</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </div>
+            </div>
+            
+            
         </div>
     </div>
 
