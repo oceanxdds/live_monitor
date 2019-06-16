@@ -152,7 +152,7 @@ export default {
                         }
                         else if(temp.length==3&&temp[0]=='fb'){
                             code = temp[1]+':'+temp[2];
-                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
+                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2]+'&autoplay=false';
                             type = 'fb';
                         }
                         else if(temp.length==3&&temp[0]=='ls'){
@@ -207,7 +207,7 @@ export default {
                     if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_.]+)\/videos\/(\d+)/))
                     {
                         code = temp[1]+':'+temp[2];
-                        url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2];
+                        url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2]+'&autoplay=false';
                         type = 'fb';
                     }
                 }
