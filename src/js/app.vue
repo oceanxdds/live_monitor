@@ -47,7 +47,7 @@
         <div class="container py-2">
             <div class="d-flex">
                 <div class="mr-1 flex-grow-1">
-                    
+                    <b-button size="sm" variant="success" @click="syncLive()">Sync Live</b-button>
                 </div>
                 <div class="ml-auto mx-1 p-2 small">
                     Version: {{ version }}
@@ -75,7 +75,7 @@
 </style>
 
 <script>
-
+import axios from 'axios';
 const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 const yt_host = "https://www.youtube.com";
 const yt_short_host = "https://youtu.be";
@@ -280,6 +280,22 @@ export default {
             document.execCommand("copy");
             
             sel.removeAllRanges();
+        },
+        syncLive:function(){
+            
+            let self = this;
+            
+            axios.get('https://oceanxdds.github.io/live_monitor/channel.txt',{
+                params: {
+                    time: (new Date()).getTime()
+                }})
+                .then(function (response) {
+                    //console.log(response);
+                    self.addVideo(response.data);
+                })
+                .catch(function (error) {
+                    //console.log(error);
+                });
         }
     }
 }
