@@ -144,7 +144,7 @@ export default {
                         else if(temp.length==2&&temp[0]=='tt')
                         {
                             code = temp[1];
-                            url2 = tt_embed_channel_host+code;
+                            url2 = tt_embed_channel_host+code+'&autoplay=false';
                             type = 'tt';
                         }
                         else if(temp.length==3&&temp[0]=='fb'){
@@ -194,7 +194,7 @@ export default {
                     if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_.]+/))
                     {
                         code = temp[0];
-                        url2 = tt_embed_channel_host+code;
+                        url2 = tt_embed_channel_host+code+'&autoplay=false';
                         type = 'tt';
                     }
                 }
