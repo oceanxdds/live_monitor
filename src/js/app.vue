@@ -53,7 +53,9 @@
                     Version: {{ version }}
                 </div>
                 <div class="mx-1">
-                    <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
+                    <a href="https://extradition.g0vhk.io/index-en.html" target="_blank">
+                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
+                    </a>
                  </div>
                 <div class="ml-1">
                     <a href="https://github.com/oceanxdds/live_monitor" target="_blank">
