@@ -101,7 +101,9 @@ export default {
             version:'190617',
             url:'',
             exportUrlId:'expUrlId',
-            videos:[]
+            videos:[],
+            last_me:'',
+            last_g0v:''
         }
     },
     watch:{
@@ -315,7 +317,11 @@ export default {
                     time: (new Date()).getTime()
                 }})
                 .then(function (response) {
-                    self.addVideo(response.data);
+                    if(response.data!=self.last_me){
+                        self.last_me = response.data;
+                        self.addVideo(response.data);
+                    }
+                    
                 });
 
             axios.get('https://ncehk2019.github.io/nce-live-datasrc/lives.json',{
@@ -324,9 +330,11 @@ export default {
                 }})
                 .then(function (response) {
                     if(response.data&&response.data.lives){
-                        response.data.lives.filter(v=>v.active&&v.type=='facebook').map(v=>v['#id']).forEach(x=>{
-                            self.addVideo(x);
-                        });
+                        let arr = response.data.lives.filter(v=>v.active&&v.type=='facebook').map(v=>v['#id']);
+                        if(self.last_g0v!=arr.join()){
+                            self.last_g0v = arr.join();
+                            arr.forEach(x=>{ self.addVideo(x);  });
+                        }
                     };
                 });
         }
