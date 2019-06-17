@@ -22,18 +22,18 @@
 
     <div class="container-fluid">
         <div class="form-row py-3" v-if="videos.length">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus,'order-first':v.focus}" v-for="(v,index) in videos" :key="v.code">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" :style="{'order':v.focus?0:(v.order+1)}" v-for="v in videos" :key="v.code">
                 <div class="border my-1">
                     <div class="d-flex py-1">
-                        <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">CH{{ (index+1) }}</b-button></div>
+                        <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">CH{{ (v.order+1) }}</b-button></div>
                         <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
                         <div class="mx-1">
                             <b-button-group>
-                                <b-button variant="secondary" size="sm" @click="moveLeft(index)">&lt;</b-button>
-                                <b-button variant="secondary" size="sm" @click="moveRight(index)">&gt;</b-button>
+                                <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
+                                <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
                             </b-button-group>
                         </div>
-                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(index)">&#10005;</b-button></div>
+                        <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&#10005;</b-button></div>
                     </div>
                     <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
                 </div>
@@ -98,7 +98,7 @@ const ls_host = "https://livestream.com";
 export default {
     data:function(){
         return {
-            version:'190616',
+            version:'190617',
             url:'',
             exportUrlId:'expUrlId',
             videos:[]
@@ -113,12 +113,12 @@ export default {
     computed:{
         hash:function(){
             
-            return '#'+this.videos.map(v=>v.type+':'+v.code).join(',');
+            return '#'+this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).map(v=>v.type+':'+v.code).join(',');
         },
         export_url:function(){
 
             return live_monitor_host +'/'+ this.hash;
-        },
+        }
     },
     created:function(){
         
@@ -248,33 +248,49 @@ export default {
                     code:code,
                     focus:false,
                     url:url2,
-                    type:type
+                    type:type,
+                    order: this.videos.length
                 });
             });
 
             this.url = '';
         },
-        removeVideo:function(index){
+        removeVideo:function(video){
 
-            this.videos.splice(index,1);
+            this.videos.splice(this.videos.indexOf(video),1);
+
+            this.updateOrder();
         },
         focusVideo:function(video){
 
             this.videos.forEach(v=>{v.focus=(v.code==video.code)&&!v.focus});
         },
-        moveLeft:function(index){
+        moveLeft:function(video){
 
-            if(index==0)
-                return ;
-
-            this.videos.splice(index-1,0,this.videos.splice(index,1)[0]);
+            if(video.order!=0)
+            {
+                this.videos.forEach(v=>{
+                    if(v.order==video.order-1) v.order++;
+                });
+                video.order--;
+            }
         },
-        moveRight:function(index){
+        moveRight:function(video){
 
-            if(index==this.videos.length-1)
-                return ;
+            if(video.order!=this.videos.length-1)
+            {
+                this.videos.forEach(v=>{
+                    if(v.order==video.order+1) v.order--;
+                });
+                video.order++;    
+            }
+        },
+        updateOrder:function(){
 
-            this.videos.splice(index,0,this.videos.splice(index+1,1)[0]);
+            let order = 0;
+            this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).forEach(v=>{
+                v.order = order++;
+            });
         },
         copyUrl:function(){
 
@@ -299,11 +315,7 @@ export default {
                     time: (new Date()).getTime()
                 }})
                 .then(function (response) {
-                    //console.log(response);
                     self.addVideo(response.data);
-                })
-                .catch(function (error) {
-                    //console.log(error);
                 });
         }
     }
