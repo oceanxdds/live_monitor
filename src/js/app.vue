@@ -317,6 +317,18 @@ export default {
                 .then(function (response) {
                     self.addVideo(response.data);
                 });
+
+            axios.get('https://ncehk2019.github.io/nce-live-datasrc/lives.json',{
+                params: {
+                    time: (new Date()).getTime()
+                }})
+                .then(function (response) {
+                    if(response.data&&response.data.lives){
+                        response.data.lives.filter(v=>v.active&&v.type=='facebook').map(v=>v['#id']).forEach(x=>{
+                            self.addVideo(x);
+                        });
+                    };
+                });
         }
     }
 }
