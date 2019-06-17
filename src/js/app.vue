@@ -190,6 +190,16 @@ export default {
                     }
                 }
 
+                if(!code && u.match(yt_host))
+                {
+                    if(temp = u.replace(yt_host,"").match(/embed\/([a-zA-Z0-9-_.]+)/))
+                    {
+                        code = temp[1];
+                        url2 = yt_embed_host+'/'+code;
+                        type = 'yt';
+                    }
+                }
+
                 if(!code && u.match(yt_short_host))
                 {
                     if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_.]+/))
@@ -330,7 +340,7 @@ export default {
                 }})
                 .then(function (response) {
                     if(response.data&&response.data.lives){
-                        let arr = response.data.lives.filter(v=>v.active&&v.type=='facebook').map(v=>v['#id']);
+                        let arr = response.data.lives.filter(v=>v.active).map(v=>v['#id']);
                         if(self.last_g0v!=arr.join()){
                             self.last_g0v = arr.join();
                             arr.forEach(x=>{ self.addVideo(x);  });
