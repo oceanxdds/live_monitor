@@ -4,7 +4,7 @@
         <div class="container-fluid mw-1140 py-2">
             <div class="d-flex">
                 <div class="mr-1">
-                    <b-button size="sm" pill variant="success" @click="syncLive()">I ♥ HK</b-button>
+                    <b-button size="sm" class="text-nowrap" pill variant="success" @click="syncLive()">I ♥ HK</b-button>
                 </div>
                 <div class="ml-1 flex-grow-1">
                     <b-input-group prepend="Source" size="sm">
@@ -95,15 +95,18 @@ export default {
             version:'190618',
             url:'',
             exportUrlId:'expUrlId',
+            export_url:'',
             videos:[],
             last_me:'',
             last_g0v:''
         }
     },
     watch:{
+
         hash:function(){
 
             window.location.hash = this.hash;
+            this.export_url = live_monitor_host +'/'+ this.hash;
         },
         videos:function(){
 
@@ -111,13 +114,10 @@ export default {
         }
     },
     computed:{
+
         hash:function(){
             
             return '#'+this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).map(v=>v.code).join(',');
-        },
-        export_url:function(){
-
-            return live_monitor_host +'/'+ this.hash;
         }
     },
     created:function(){
