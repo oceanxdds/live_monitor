@@ -26,7 +26,7 @@
                 <div class="border my-1">
                     <div class="d-flex py-1">
                         <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">CH{{ (v.order+1) }}</b-button></div>
-                        <div class="mx-1"><b-form-input size="sm" :value="v.type +':'+ v.code " disabled></b-form-input></div>
+                        <div class="mx-1"><b-form-input size="sm" :value="v.code" disabled></b-form-input></div>
                         <div class="mx-1">
                             <b-button-group>
                                 <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
@@ -85,22 +85,14 @@
 
 <script>
 import axios from 'axios';
+import {str2video} from './utility/str2video';
+import {loadVideos} from './utility/loadVideos';
 const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
-const yt_host = "https://www.youtube.com";
-const yt_short_host = "https://youtu.be";
-const yt_embed_host = "https://www.youtube-nocookie.com/embed";
-const tt_host = "https://www.twitch.tv";
-const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
-const fb_host = "https://www.facebook.com";
-const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=";
-const ls_host = "https://livestream.com";
-const live_source_me = "https://oceanxdds.github.io/live_monitor/channel.txt";
-const live_source_g0v = "https://ncehk2019.github.io/nce-live-datasrc/lives.json";
 
 export default {
     data:function(){
         return {
-            version:'190617',
+            version:'190618',
             url:'',
             exportUrlId:'expUrlId',
             videos:[],
@@ -112,12 +104,16 @@ export default {
         hash:function(){
 
             window.location.hash = this.hash;
+        },
+        videos:function(){
+
+            document.title = (this.videos.length ? '('+this.videos.length+') ' : '')+'Live Monitor';
         }
     },
     computed:{
         hash:function(){
             
-            return '#'+this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).map(v=>v.type+':'+v.code).join(',');
+            return '#'+this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).map(v=>v.code).join(',');
         },
         export_url:function(){
 
@@ -135,136 +131,19 @@ export default {
             
             url = url ? url : this.url;
 
-            url.split(/ |,/).filter(x=>x).forEach(u=>{
+            url.split(/ |,/).filter(x=>x).forEach(str=>{
 
-                let code = '';
-                let temp = '';
-                let url2 = '';
-                let type = '';
+                let video = str2video(str);
 
-                if(!code)
-                {
-                    if(temp = u.match(/^[a-zA-Z0-9-_:.]+$/))
-                    {
-                        code = temp[0];
-                        temp = code.split(':');
-
-                        if(temp.length==2&&temp[0]=='yt'){
-                            code = temp[1];
-                            url2 = yt_embed_host+'/'+code;
-                            type = 'yt';
-                        }
-                        else if(temp.length==2&&temp[0]=='tt')
-                        {
-                            code = temp[1];
-                            url2 = tt_embed_channel_host+code+'&autoplay=false';
-                            type = 'tt';
-                        }
-                        else if(temp.length==3&&temp[0]=='fb'){
-                            code = temp[1]+':'+temp[2];
-                            url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2]+'&autoplay=false';
-                            type = 'fb';
-                        }
-                        else if(temp.length==3&&temp[0]=='ls'){
-                            code = temp[1]+':'+temp[2];
-                            url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/player';
-                            type = 'ls';
-                        }
-                        else if(temp.length==4&&temp[0]=='ls'){
-                            code = temp[1]+':'+temp[2]+':'+temp[3];
-                            url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/videos/'+temp[3]+'/player';
-                            type = 'ls';
-                        }
-                        else{
-                            url2 = yt_embed_host+'/'+code;
-                            type = 'yt';
-                        }
-                    }
-                }
-
-                if(!code && u.match(yt_host))
-                {
-                    if(temp = u.replace(yt_host,"").match(/v=[a-zA-Z0-9-_.]+/))
-                    {
-                        code = temp[0].replace('v=','');
-                        url2 = yt_embed_host+'/'+code;
-                        type = 'yt';
-                    }
-                }
-
-                if(!code && u.match(yt_host))
-                {
-                    if(temp = u.replace(yt_host,"").match(/embed\/([a-zA-Z0-9-_.]+)/))
-                    {
-                        code = temp[1];
-                        url2 = yt_embed_host+'/'+code;
-                        type = 'yt';
-                    }
-                }
-
-                if(!code && u.match(yt_short_host))
-                {
-                    if(temp = u.replace(yt_short_host,"").match(/[a-zA-Z0-9-_.]+/))
-                    {
-                        code = temp[0];
-                        url2 = yt_embed_host+'/'+code;
-                        type = 'yt';
-                    }
-                }
-
-                if(!code && u.match(tt_host))
-                {
-                    if(temp = u.replace(tt_host,"").match(/[a-zA-Z0-9-_.]+/))
-                    {
-                        code = temp[0];
-                        url2 = tt_embed_channel_host+code+'&autoplay=false';
-                        type = 'tt';
-                    }
-                }
-
-                if(!code && u.match(fb_host))
-                {
-                    if(temp = u.replace(fb_host,"").match(/\/([a-zA-Z0-9-_.]+)\/videos\/(\d+)/))
-                    {
-                        code = temp[1]+':'+temp[2];
-                        url2 = fb_embed_host+fb_host+'/'+temp[1]+'/videos/'+temp[2]+'&autoplay=false';
-                        type = 'fb';
-                    }
-                }
-
-                if(!code && u.match(ls_host))
-                {
-                    if(temp = u.replace(ls_host,"").match(/accounts\/(\d+)\/events\/(\d+)\/videos\/(\d+)/))
-                    {
-                        code = temp[1]+':'+temp[2]+':'+temp[3];
-                        url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/videos/'+temp[3]+'/player';
-                        type = 'ls';
-                    }
-                }
-
-                if(!code && u.match(ls_host))
-                {
-                    if(temp = u.replace(ls_host,"").match(/accounts\/(\d+)\/events\/(\d+)/))
-                    {
-                        code = temp[1]+':'+temp[2];
-                        url2 = ls_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/player';
-                        type = 'ls';
-                    }
-                }
-
-                if(!code)
+                if(!video)
                     return;
 
-                if(this.videos.filter(v=>v.code==code).length>0)
+                if(this.videos.filter(v=>v.code==video.code).length>0)
                     return ;
                 
-                this.videos.push({
-                    code:code,
-                    focus:false,
-                    url:url2,
-                    type:type,
-                    order: this.videos.length
-                });
+                video.order = this.videos.length;
+                
+                this.videos.push(video);
             });
 
             this.url = '';
@@ -300,40 +179,34 @@ export default {
         copyUrl:function(){
 
             let TextRange = document.createRange();
-
             TextRange.selectNode(document.getElementById(this.exportUrlId));
 
             let sel = window.getSelection();
-
             sel.removeAllRanges();
             sel.addRange(TextRange);
             document.execCommand("copy");
-            
             sel.removeAllRanges();
         },
         syncLive:function(){
             
             let self = this;
-            
-            axios.get( live_source_me ,{params: {t: (new Date()).getTime() }})
-                .then(function (response) {
-                    if(response.data!=self.last_me){
-                        self.last_me = response.data;
-                        self.addVideo(response.data);
-                    }
-                    
-                });
 
-            axios.get( live_source_g0v ,{params: {time: (new Date()).getTime()}})
-                .then(function (response) {
-                    if(response.data&&response.data.lives){
-                        let arr = response.data.lives.filter(v=>v.active).map(v=>v['#id']);
-                        if(self.last_g0v!=arr.join()){
-                            self.last_g0v = arr.join();
-                            arr.forEach(x=>{ self.addVideo(x); });
-                        }
-                    };
-                });
+            loadVideos('me',function(response){
+                if(response.data!=self.last_me){
+                    self.last_me = response.data;
+                    self.addVideo(response.data);
+                }
+            });
+
+            loadVideos('g0v',function(response){
+                if(response.data&&response.data.lives){
+                    let arr = response.data.lives.filter(v=>v.active).map(v=>v['#id']);
+                    if(self.last_g0v!=arr.join()){
+                        self.last_g0v = arr.join();
+                        arr.forEach(x=>{ self.addVideo(x); });
+                    }
+                };
+            });
         }
     }
 }
