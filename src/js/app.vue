@@ -4,7 +4,7 @@
         <div class="container-fluid mw-1140 py-2">
             <div class="d-flex">
                 <div class="mr-1">
-                    <b-button size="sm" variant="success" @click="syncLive()">Sync Live</b-button>
+                    <b-button size="sm" pill variant="success" @click="syncLive()">I ♥ HK</b-button>
                 </div>
                 <div class="ml-1 flex-grow-1">
                     <b-input-group prepend="Source" size="sm">
@@ -63,7 +63,7 @@
                 </div>
                 <div class="mx-1">
                     <a href="https://extradition.g0vhk.io/index-en.html" target="_blank">
-                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
+                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Law">
                     </a>
                  </div>
                 <div class="ml-1">
@@ -94,6 +94,8 @@ const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
 const fb_host = "https://www.facebook.com";
 const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=";
 const ls_host = "https://livestream.com";
+const live_source_me = "https://oceanxdds.github.io/live_monitor/channel.txt";
+const live_source_g0v = "https://ncehk2019.github.io/nce-live-datasrc/lives.json";
 
 export default {
     data:function(){
@@ -270,7 +272,6 @@ export default {
         removeVideo:function(video){
 
             this.videos.splice(this.videos.indexOf(video),1);
-
             this.updateOrder();
         },
         focusVideo:function(video){
@@ -279,30 +280,22 @@ export default {
         },
         moveLeft:function(video){
 
-            if(video.order!=0)
-            {
-                this.videos.forEach(v=>{
-                    if(v.order==video.order-1) v.order++;
-                });
-                video.order--;
-            }
+            if(video.order==0) return;
+
+            let left = this.videos.filter(v=>v.order==video.order-1)[0];
+            [left.order,video.order] = [video.order,left.order];
         },
         moveRight:function(video){
 
-            if(video.order!=this.videos.length-1)
-            {
-                this.videos.forEach(v=>{
-                    if(v.order==video.order+1) v.order--;
-                });
-                video.order++;    
-            }
+            if(video.order==this.videos.length-1) return;
+            
+            let right = this.videos.filter(v=>v.order==video.order+1)[0];
+            [video.order,right.order] = [right.order,video.order];
         },
         updateOrder:function(){
 
-            let order = 0;
-            this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).forEach(v=>{
-                v.order = order++;
-            });
+           this.videos.map(v=>v).sort((a,b)=>(a.order-b.order))
+                .forEach((v,index)=>{v.order = index});
         },
         copyUrl:function(){
 
@@ -322,10 +315,7 @@ export default {
             
             let self = this;
             
-            axios.get('https://oceanxdds.github.io/live_monitor/channel.txt',{
-                params: {
-                    time: (new Date()).getTime()
-                }})
+            axios.get( live_source_me ,{params: {t: (new Date()).getTime() }})
                 .then(function (response) {
                     if(response.data!=self.last_me){
                         self.last_me = response.data;
@@ -334,16 +324,13 @@ export default {
                     
                 });
 
-            axios.get('https://ncehk2019.github.io/nce-live-datasrc/lives.json',{
-                params: {
-                    time: (new Date()).getTime()
-                }})
+            axios.get( live_source_g0v ,{params: {time: (new Date()).getTime()}})
                 .then(function (response) {
                     if(response.data&&response.data.lives){
                         let arr = response.data.lives.filter(v=>v.active).map(v=>v['#id']);
                         if(self.last_g0v!=arr.join()){
                             self.last_g0v = arr.join();
-                            arr.forEach(x=>{ self.addVideo(x);  });
+                            arr.forEach(x=>{ self.addVideo(x); });
                         }
                     };
                 });
