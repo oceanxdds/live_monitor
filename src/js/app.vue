@@ -47,7 +47,7 @@
     <div class="">
         <div class="container-fluid mw-1140 py-2">
             <b-input-group class="" prepend="Share" size="sm">
-                <b-form-input v-model="export_url" :id="exportUrlId" disabled></b-form-input>
+                <b-form-input v-model="export_url" :id="export_url_id" disabled></b-form-input>
                 <b-input-group-append>
                     <b-button variant="secondary" @click="copyUrl()">Copy URL</b-button>
                 </b-input-group-append>
@@ -86,9 +86,9 @@
 </style>
 
 <script>
-import axios from 'axios';
-import {str2video} from './utility/str2video';
-import {loadVideos} from './utility/loadVideos';
+import {str2videos} from './utility';
+import {loadVideos} from './utility';
+
 const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 
 export default {
@@ -96,13 +96,11 @@ export default {
         return {
             version:'190619',
             url:'',
-            exportUrlId:'expUrlId',
-            export_url:'',
             videos:[],
+            export_url:'',
+            export_url_id:'export_url_id',
             auto:false,
-            auto_interval:null,
-            last_me:'',
-            last_g0v:''
+            auto_interval:null
         }
     },
     watch:{
@@ -136,29 +134,34 @@ export default {
             return '#'+this.videos.map(v=>v).sort((a,b)=>(a.order-b.order)).map(v=>v.code).join(',');
         }
     },
-    created:function(){
+    mounted:function(){
         
         if(window.location.hash)
             this.addVideo(window.location.hash.substr(1));
     },
     methods:{
+        
+        syncLive:function(){
+            
+            let self = this;
 
+            loadVideos(function(arr){
+                
+                arr.forEach(str=>{self.addVideo(str);})
+            });
+        },
         addVideo:function(url){
             
             url = url ? url : this.url;
 
-            url.split(/ |,/).filter(x=>x).forEach(str=>{
-
-                let video = str2video(str);
-
-                if(!video)
-                    return;
+            let videos = str2videos(url);
+            
+            videos.forEach(video=>{
 
                 if(this.videos.filter(v=>v.code==video.code).length>0)
                     return ;
-                
+        
                 video.order = this.videos.length;
-                
                 this.videos.push(video);
             });
 
@@ -202,27 +205,6 @@ export default {
             sel.addRange(TextRange);
             document.execCommand("copy");
             sel.removeAllRanges();
-        },
-        syncLive:function(){
-            
-            let self = this;
-
-            loadVideos('me',function(response){
-                if(response.data!=self.last_me){
-                    self.last_me = response.data;
-                    self.addVideo(response.data);
-                }
-            });
-
-            loadVideos('g0v',function(response){
-                if(response.data&&response.data.lives){
-                    let arr = response.data.lives.filter(v=>v.active).map(v=>v['#id']);
-                    if(self.last_g0v!=arr.join()){
-                        self.last_g0v = arr.join();
-                        arr.forEach(x=>{ self.addVideo(x); });
-                    }
-                };
-            });
         }
     }
 }
