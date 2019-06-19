@@ -56,7 +56,9 @@
         <div class="container py-2">
             <div class="d-flex">
                 <div class="mr-1 flex-grow-1">
-                    
+                    <b-form-checkbox v-model="auto" switch>
+                        Load videos every 5 min(s).
+                    </b-form-checkbox>
                 </div>
                 <div class="ml-auto mx-1 p-2 small">
                     Version: {{ version }}
@@ -92,11 +94,13 @@ const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 export default {
     data:function(){
         return {
-            version:'190618',
+            version:'190619',
             url:'',
             exportUrlId:'expUrlId',
             export_url:'',
             videos:[],
+            auto:false,
+            auto_interval:null,
             last_me:'',
             last_g0v:''
         }
@@ -111,6 +115,18 @@ export default {
         videos:function(){
 
             document.title = (this.videos.length ? '('+this.videos.length+') ' : '')+'Live Monitor';
+        },
+        auto:function(){
+            
+            clearInterval(this.auto_interval);
+
+            if(this.auto)
+            {
+                let self = this;
+                this.auto_interval = setInterval(function(){
+                    self.syncLive();
+                },600000)
+            }
         }
     },
     computed:{
