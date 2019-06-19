@@ -53,14 +53,14 @@
                 </b-input-group-append>
             </b-input-group>
         </div>
-        <div class="container py-2">
+        <div class="container-fluid mw-1140 py-2">
             <div class="d-flex">
-                <div class="mr-1 flex-grow-1">
+                <div class="mr-1 flex-fill">
                     <b-form-checkbox v-model="auto" switch>
                         Load videos every 5 min(s).
                     </b-form-checkbox>
                 </div>
-                <div class="ml-auto mx-1 p-2 small">
+                <div class="mx-1 p-2 small">
                     Version: {{ version }}
                 </div>
                 <div class="mx-1">
