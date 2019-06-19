@@ -77,7 +77,7 @@ let str2video = function(str){
     if(!code && (temp = str.match(/^(fb):([a-zA-Z0-9-_.]+):(\d+)$/)))
     {
         type = temp[1];
-        code = [type,temp[2]+temp[3]].join(':');
+        code = [type,temp[2],temp[3]].join(':');
         url = fb_embed_host+'/'+temp[2]+'/videos/'+temp[3]+'&autoplay=false';
     }
 
