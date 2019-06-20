@@ -7,7 +7,6 @@ let sources = [
         callback:function(src,data,callback){
 
             if(data!=src.last){
-
                 src.last = data;
                 callback([data]);
             }
@@ -21,11 +20,8 @@ let sources = [
             if(data&&data.lives){
                 
                 let arr = data.lives.filter(v=>v.active).map(v=>v['#id']);
-
                 if(src.last != arr.join()){
-
                     src.last = arr.join();
-                    
                     callback(arr);
                 }
             }

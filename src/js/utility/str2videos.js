@@ -4,17 +4,8 @@ let str2videos = function(url){
 
     return url.split(/ |,/).map(str=>{
 
-        if(!str)
-            return null;
-        
-        let video = str2video(str);
+        return str ? str2video(str) : null;
 
-        if(!video)
-            return null;
-
-        
-        return video;
-    
     }).filter(v=>v);
 }
 

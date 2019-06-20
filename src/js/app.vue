@@ -6,7 +6,7 @@
                 <div class="mr-1">
                     <b-button size="sm" class="text-nowrap" pill variant="success" @click="syncLive()">I ♥ HK</b-button>
                 </div>
-                <div class="ml-1 flex-grow-1">
+                <div class="ml-1 flex-fill">
                     <b-input-group prepend="Source" size="sm">
                         <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                         <b-input-group-append>
@@ -82,7 +82,6 @@
 <style>
 [v-cloak] { display: none;}
 .mw-1140{ max-width:1140px; }
-.bg-custom{ background-color:#f0f0f0; }
 </style>
 
 <script>
@@ -94,7 +93,7 @@ const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 export default {
     data:function(){
         return {
-            version:'190619',
+            version:'190620',
             url:'',
             videos:[],
             export_url:'',
