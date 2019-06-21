@@ -43,8 +43,11 @@
                  @drop="drop_handler(v)">
                 <div class="border my-1">
                     <div class="d-flex py-1 cursor-move">
-                        <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">CH{{ (v.order+1) }}</b-button></div>
-                        <div class="mx-1"><b-form-input size="sm" :value="v.code" disabled></b-form-input></div>
+                        <b-dropdown class="mx-1" size="sm" split :text="'CH'+ (v.order+1) " variant="success" @click="focusVideo(v)">
+                            <b-dropdown-text style="width:275px">
+                                <b-form-input size="sm" :value="v.code" disabled></b-form-input>
+                            </b-dropdown-text>
+                        </b-dropdown>
                         <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&#10005;</b-button></div>
                     </div>
                     <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
