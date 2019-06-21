@@ -103,7 +103,9 @@ let str2video = function(str){
         code:code,
         url:url,
         focus:false,
-        order: 0
+        order: 0,
+        dragging:false,
+        dragover:false
     };
 };
 

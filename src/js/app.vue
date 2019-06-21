@@ -29,17 +29,22 @@
 
     <div class="container-fluid">
         <div class="form-row py-3" v-if="videos.length">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3" :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus}" :style="{'order':v.focus?0:(v.order+1)}" v-for="v in videos" :key="v.code">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3" 
+                :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus,'dragging':v.dragging}" 
+                :style="{'order':v.focus?0:(v.order+1)}" 
+                v-for="v in videos" :key="v.code"
+                :id="v.code"
+                 draggable="true"
+                 @dragstart="dragstart_handler(v)"
+                 @dragend="dragend_handler(v)"
+                 @dragenter.prevent
+                 @dragleave.prevent
+                 @dragover.prevent
+                 @drop="drop_handler(v)">
                 <div class="border my-1">
-                    <div class="d-flex py-1">
+                    <div class="d-flex py-1 cursor-move">
                         <div class="mx-1"><b-button variant="success" size="sm" @click="focusVideo(v)">CH{{ (v.order+1) }}</b-button></div>
                         <div class="mx-1"><b-form-input size="sm" :value="v.code" disabled></b-form-input></div>
-                        <div class="mx-1">
-                            <b-button-group>
-                                <b-button variant="secondary" size="sm" @click="moveLeft(v)">&lt;</b-button>
-                                <b-button variant="secondary" size="sm" @click="moveRight(v)">&gt;</b-button>
-                            </b-button-group>
-                        </div>
                         <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&#10005;</b-button></div>
                     </div>
                     <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
@@ -87,6 +92,9 @@
 <style>
 [v-cloak] { display: none;}
 .mw-1140{ max-width:1140px; }
+[draggable="true"] { user-select: none; }
+.cursor-move{ cursor:move; }
+.dragging{background-color:cornflowerblue}
 </style>
 
 <script>
@@ -105,7 +113,8 @@ export default {
             export_url_id:'export_url_id',
             auto:false,
             auto_interval:null,
-            live_mode:true
+            live_mode:true,
+            dragged_video:null
         }
     },
     watch:{
@@ -192,6 +201,7 @@ export default {
 
             this.videos.forEach(v=>{v.focus=(v.code==video.code)&&!v.focus});
         },
+        /*
         moveLeft:function(video){
 
             if(video.order==0) return;
@@ -205,7 +215,7 @@ export default {
                         
             let right = this.videos.filter(v=>v.order==video.order+1)[0];
             [video.order,right.order] = [right.order,video.order];
-        },
+        },*/
         updateOrder:function(){
 
            this.videos.map(v=>v).sort((a,b)=>(a.order-b.order))
@@ -221,6 +231,45 @@ export default {
             sel.addRange(TextRange);
             document.execCommand("copy");
             sel.removeAllRanges();
+        },
+        dragstart_handler:function(video){
+            this.dragged_video = video;
+            video.dragging = true;
+        },
+        dragend_handler:function(video){
+            this.dragged_video = null;
+            video.dragging = false;
+        },
+        drop_handler:function(video){
+
+            if(!this.dragged_video)
+                return;
+            
+            let a = this.dragged_video;
+            let b = video;
+            let order = video.order;
+
+            if( b.order < a.order ){
+                
+                this.videos.forEach(v=>{
+                    if( order <= v.order && v.order < a.order )
+                        v.order++;
+                })
+
+                a.order = order;
+            }
+            else if( a.order < b.order ){
+
+                this.videos.forEach(v=>{
+                    if( a.order < v.order && v.order <= order )
+                        v.order--;
+                })
+
+                a.order = order;
+            }else{
+                
+            }
+            
         }
     }
 }
