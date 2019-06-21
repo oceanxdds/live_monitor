@@ -3,11 +3,18 @@
     <div class="shadow-sm">
         <div class="container-fluid mw-1140 py-2">
             <div class="d-flex">
-                <div class="mr-1">
-                    <b-button size="sm" class="text-nowrap" pill variant="success" @click="syncLive()">I ♥ HK</b-button>
-                </div>
-                <div class="ml-1 flex-fill">
-                    <b-input-group prepend="Source" size="sm">
+                <div class="mr-1 flex-fill">
+                    <b-input-group prepend="" size="sm">
+                        <b-input-group-append>
+                            <b-dropdown size="sm" split text="Reload" variant="success" @click="syncLive()">
+                                <b-dropdown-item href="#" @click="toggleAuto()">
+                                    Auto reload | <span class="font-weight-bold" :class="{'text-success':auto,'text-secondary':!auto}">{{ auto ? 'On' : 'Off' }}</span>
+                                </b-dropdown-item>
+                                <b-dropdown-text style="width:275px">
+                                    Hong Kong Anti Extradition Bill
+                                </b-dropdown-text>
+                            </b-dropdown>
+                        </b-input-group-append>
                         <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                         <b-input-group-append>
                             <b-button @click="addVideo()">Enter</b-button>
@@ -56,16 +63,14 @@
         <div class="container-fluid mw-1140 py-2">
             <div class="d-flex">
                 <div class="mr-1 flex-fill">
-                    <b-form-checkbox v-model="auto" switch>
-                        Load videos every 5 min(s).
-                    </b-form-checkbox>
+
                 </div>
                 <div class="mx-1 p-2 small">
                     Version: {{ version }}
                 </div>
                 <div class="mx-1">
                     <a href="https://extradition.g0vhk.io/index-en.html" target="_blank">
-                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Law">
+                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
                     </a>
                  </div>
                 <div class="ml-1">
@@ -99,7 +104,8 @@ export default {
             export_url:'',
             export_url_id:'export_url_id',
             auto:false,
-            auto_interval:null
+            auto_interval:null,
+            live_mode:true
         }
     },
     watch:{
@@ -138,12 +144,19 @@ export default {
         if(window.location.hash)
             this.addVideo(window.location.hash.substr(1));
         
-        this.syncLive();
+        if(this.live_mode){
+            
+            this.syncLive();
 
-        this.auto = true;
+            this.auto = true;
+        }
+        
     },
     methods:{
-        
+        toggleAuto:function(){
+
+            this.auto = ! this.auto;
+        },
         syncLive:function(){
             
             let self = this;
