@@ -201,7 +201,7 @@ export default {
         copyUrl:function(){
 
             let TextRange = document.createRange();
-            TextRange.selectNode(document.getElementById(this.exportUrlId));
+            TextRange.selectNode(document.getElementById(this.export_url_id));
 
             let sel = window.getSelection();
             sel.removeAllRanges();
