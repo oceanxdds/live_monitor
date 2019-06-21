@@ -185,7 +185,7 @@ export default {
         moveRight:function(video){
 
             if(video.order==this.videos.length-1) return;
-            
+                        
             let right = this.videos.filter(v=>v.order==video.order+1)[0];
             [video.order,right.order] = [right.order,video.order];
         },

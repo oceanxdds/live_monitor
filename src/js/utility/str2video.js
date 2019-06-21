@@ -93,7 +93,7 @@ let str2video = function(str){
         code = 'ls:'+temp[1]+':'+temp[2]+':'+temp[3];
         url = ls_embed_host+'/accounts/'+temp[1]+'/events/'+temp[2]+'/videos/'+temp[3]+'/player';
     }
-    
+
     else
     {
         return null;
