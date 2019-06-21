@@ -137,6 +137,10 @@ export default {
         
         if(window.location.hash)
             this.addVideo(window.location.hash.substr(1));
+        
+        this.syncLive();
+
+        this.auto = true;
     },
     methods:{
         
