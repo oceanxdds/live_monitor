@@ -98,7 +98,7 @@ const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 export default {
     data:function(){
         return {
-            version:'190620',
+            version:'190621',
             url:'',
             videos:[],
             export_url:'',
