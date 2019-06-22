@@ -45,7 +45,7 @@
                         @dragleave="dragleave_handler(v)"
                         @drop="drop_handler(v)"
                         
-                        @mouseleave="mouseleave_handler(v)">
+                        @click="dragclick_handler(v)">
                         <b-dropdown class="mx-1" size="sm" split :text="'CH'+ (v.order+1) " variant="success" @click="focusVideo(v)">
                             <b-dropdown-text style="width:275px">
                                 <b-form-input size="sm" :value="v.code" disabled></b-form-input>
@@ -255,7 +255,7 @@ export default {
         dragleave_handler:function(video){
             video.dragover = false;
         },
-        mouseleave_handler:function(video){
+        dragclick_handler:function(video){
             video.dragover = false;
         },
         drop_handler:function(video){
