@@ -30,19 +30,20 @@
     <div class="container-fluid">
         <div class="form-row py-3" v-if="videos.length">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3" 
-                :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus,'dragging':v.dragging}" 
+                :class="{'col-md-12':v.focus,'col-lg-8':v.focus,'col-xl-6':v.focus,'dragging':v.dragging,'dragover':v.dragover}" 
                 :style="{'order':v.focus?0:(v.order+1)}" 
                 v-for="v in videos" :key="v.code"
-                :id="v.code"
-                 draggable="true"
-                 @dragstart="dragstart_handler(v)"
-                 @dragend="dragend_handler(v)"
-                 @dragenter.prevent
-                 @dragleave.prevent
-                 @dragover.prevent
-                 @drop="drop_handler(v)">
-                <div class="border my-1">
-                    <div class="d-flex py-1 cursor-move">
+                :id="v.code">
+                <div class="border my-1 bg-white">
+                    <div class="d-flex py-1 cursor-move"
+                        draggable="true"
+                        @dragstart="dragstart_handler(v)"
+                        @dragend="dragend_handler(v)"
+                        
+                        @dragenter="dragenter_handler(v)"
+                        @dragover.prevent="dragover_handler(v)"
+                        @dragleave="dragleave_handler(v)"
+                        @drop="drop_handler(v)">
                         <b-dropdown class="mx-1" size="sm" split :text="'CH'+ (v.order+1) " variant="success" @click="focusVideo(v)">
                             <b-dropdown-text style="width:275px">
                                 <b-form-input size="sm" :value="v.code" disabled></b-form-input>
@@ -50,7 +51,7 @@
                         </b-dropdown>
                         <div class="mx-1 ml-auto"><b-button variant="danger" size="sm" @click="removeVideo(v)">&#10005;</b-button></div>
                     </div>
-                    <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen></b-embed>
+                    <b-embed type="iframe" aspect="16by9" :src="v.url" allowfullscreen draggable="false"></b-embed>
                 </div>
             </div>
         </div>
@@ -98,6 +99,7 @@
 [draggable="true"] { user-select: none; }
 .cursor-move{ cursor:move; }
 .dragging{background-color:cornflowerblue}
+.dragover{background-color:cornflowerblue}
 </style>
 
 <script>
@@ -204,7 +206,6 @@ export default {
 
             this.videos.forEach(v=>{v.focus=(v.code==video.code)&&!v.focus});
         },
-        /*
         moveLeft:function(video){
 
             if(video.order==0) return;
@@ -218,7 +219,7 @@ export default {
                         
             let right = this.videos.filter(v=>v.order==video.order+1)[0];
             [video.order,right.order] = [right.order,video.order];
-        },*/
+        },
         updateOrder:function(){
 
            this.videos.map(v=>v).sort((a,b)=>(a.order-b.order))
@@ -243,8 +244,19 @@ export default {
             this.dragged_video = null;
             video.dragging = false;
         },
+        dragenter_handler:function(video){
+            video.dragover = true;
+        },
+        dragover_handler:function(video){
+            video.dragover = true;
+        },
+        dragleave_handler:function(video){
+            video.dragover = false;
+        },
         drop_handler:function(video){
-
+            
+            video.dragover = false;
+            
             if(!this.dragged_video)
                 return;
             
@@ -272,6 +284,7 @@ export default {
             }else{
                 
             }
+            
             
         }
     }
