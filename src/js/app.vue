@@ -43,7 +43,9 @@
                         @dragenter="dragenter_handler(v)"
                         @dragover.prevent="dragover_handler(v)"
                         @dragleave="dragleave_handler(v)"
-                        @drop="drop_handler(v)">
+                        @drop="drop_handler(v)"
+                        
+                        @mouseleave="mouseleave_handler(v)">
                         <b-dropdown class="mx-1" size="sm" split :text="'CH'+ (v.order+1) " variant="success" @click="focusVideo(v)">
                             <b-dropdown-text style="width:275px">
                                 <b-form-input size="sm" :value="v.code" disabled></b-form-input>
@@ -111,7 +113,7 @@ const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 export default {
     data:function(){
         return {
-            version:'190621',
+            version:'190622',
             url:'',
             videos:[],
             export_url:'',
@@ -251,6 +253,9 @@ export default {
             video.dragover = true;
         },
         dragleave_handler:function(video){
+            video.dragover = false;
+        },
+        mouseleave_handler:function(video){
             video.dragover = false;
         },
         drop_handler:function(video){
