@@ -14,13 +14,13 @@
   "devDependencies": {
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.24",
-    "cross-env": "^5.2.0",
-    "laravel-mix": "^4.0.16",
+    "bootstrap-vue": "^2.1.0",
+    "cross-env": "^5.2.1",
+    "laravel-mix": "^4.1.4",
     "laravel-mix-bundle-analyzer": "^1.0.2",
-    "laravel-mix-polyfill": "^1.0.2",
-    "sass": "^1.21.0",
-    "sass-loader": "^7.1.0",
+    "laravel-mix-polyfill": "^1.1.0",
+    "sass": "^1.23.6",
+    "sass-loader": "^7.3.1",
     "vue": "^2.6.10",
     "vue-template-compiler": "^2.6.10"
   }

@@ -11,21 +11,6 @@ let sources = [
                 callback([data]);
             }
         }
-    },
-    {
-        url: "https://ncehk2019.github.io/nce-live-datasrc/lives.json",
-        last:'',
-        callback:function(src,data,callback){
-            
-            if(data&&data.lives){
-                
-                let arr = data.lives.filter(v=>v.active).map(v=>v['#id']);
-                if(src.last != arr.join()){
-                    src.last = arr.join();
-                    callback(arr);
-                }
-            }
-        }
     }
 ];
 
