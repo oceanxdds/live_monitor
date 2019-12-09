@@ -13,15 +13,16 @@
   "license": "ISC",
   "devDependencies": {
     "axios": "^0.19.0",
-    "bootstrap": "^4.3.1",
+    "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.1.0",
     "cross-env": "^5.2.1",
-    "laravel-mix": "^4.1.4",
-    "laravel-mix-bundle-analyzer": "^1.0.2",
+    "laravel-mix": "^5.0.0",
+    "laravel-mix-bundle-analyzer": "^1.0.4",
     "laravel-mix-polyfill": "^1.1.0",
-    "sass": "^1.23.6",
+    "sass": "^1.23.7",
     "sass-loader": "^7.3.1",
     "vue": "^2.6.10",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "dependencies": {}
 }
