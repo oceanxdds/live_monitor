@@ -1,6 +1,6 @@
 const filesToCache = [
-	'/',
-	'/index.html'
+	'/live_monitor/',
+	'/live_monitor/index.html'
 ];
 
 // install

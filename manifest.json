@@ -23,10 +23,10 @@
         "sizes": "512x512"
       }
     ],
-    "start_url": "/",
+    "start_url": "/live_monitor/",
     "background_color": "#3367D6",
     "display": "standalone",
-    "scope": "/",
+    "scope": "/live_monitor/",
     "theme_color": "#3367D6",
     "glidePWAAddToHead":""
 }
