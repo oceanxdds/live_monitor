@@ -5,7 +5,7 @@ const filesToCache = [
 
 // install
 self.addEventListener('install', event => {
-	/*
+	
 	console.log('installing…');
 
     event.waitUntil(
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
 			return cache.addAll(filesToCache);
 		})
 	);
-*/
+
 });
 
 // activate
