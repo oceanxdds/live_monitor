@@ -27,6 +27,5 @@
     "background_color": "#3367D6",
     "display": "standalone",
     "scope": "/live_monitor/",
-    "theme_color": "#3367D6",
-    "glidePWAAddToHead":""
+    "theme_color": "#3367D6"
 }
