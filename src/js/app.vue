@@ -11,7 +11,7 @@
                                     Auto reload | <span class="font-weight-bold" :class="{'text-success':auto,'text-secondary':!auto}">{{ auto ? 'On' : 'Off' }}</span>
                                 </b-dropdown-item>
                                 <b-dropdown-text style="width:275px">
-                                    Hong Kong Anti Extradition Bill
+                                    Youtube channel live check
                                 </b-dropdown-text>
                             </b-dropdown>
                         </b-input-group-append>
@@ -80,8 +80,8 @@
                     Version: {{ version }}
                 </div>
                 <div class="mx-1">
-                    <a href="https://extradition.g0vhk.io/index-en.html" target="_blank">
-                        <img src="images/theme/Bauhinia-32px.png" title="Hong Kong Anti Extradition Bill">
+                    <a href="https://tl.hkrev.info/en/police-timeline/" target="_blank">
+                        <img src="images/theme/hkdm-32px.png" title="Hong Kong Democratic Movement">
                     </a>
                  </div>
                 <div class="ml-1">
@@ -113,7 +113,7 @@ const live_monitor_host = "https://oceanxdds.github.io/live_monitor";
 export default {
     data:function(){
         return {
-            version:'190622',
+            version:'200322',
             url:'',
             videos:[],
             export_url:'',

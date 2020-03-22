@@ -1,4 +1,5 @@
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
+const yt_embed_channel_host = "https://www.youtube-nocookie.com/embed/live_stream?channel=";
 const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
 const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=https://www.facebook.com";
 const ls_embed_host = "https://livestream.com";
@@ -16,12 +17,33 @@ let str2video = function(str){
         code = 'yt:'+temp[3];
         url = yt_embed_host+'/'+temp[3];
     }
+
+    //youtube yc:xxx
+    if(temp = str.match(/^((yc):)?([a-zA-Z0-9-_.]+)$/))
+    {
+        code = 'yc:'+temp[3];
+        url = yt_embed_channel_host+temp[3];
+    }
     
     //youtube regular
     else if(temp = str.match(/^https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9-_.]+)/))
     {
         code = 'yt:'+temp[1];
         url = yt_embed_host+'/'+temp[1];
+    }
+
+    //youtube embed channel live
+    else if(temp = str.match(/^https:\/\/www.youtube\.com\/embed\/live_stream\?channel=([a-zA-Z0-9-_.]+)/))
+    {
+        code = 'yc:'+temp[1];
+        url = yt_embed_channel_host + temp[1];
+    }
+    
+    //youtube channel live
+    else if(temp = str.match(/^https:\/\/www\.youtube\.com\/channel\/([a-zA-Z0-9-_.]+)\/live/))
+    {
+        code = 'yc:'+temp[1];
+        url = yt_embed_channel_host + temp[1];
     }
 
     //youtube embed
@@ -37,6 +59,7 @@ let str2video = function(str){
         code = 'yt:'+temp[1];
         url = yt_embed_host+'/'+temp[1];
     }
+    
 
     //twitch tt:xxx
     else if(temp = str.match(/^(tt):([a-zA-Z0-9-_.]+)$/))
