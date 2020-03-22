@@ -5,7 +5,10 @@
             <div class="d-flex">
                 <div class="mr-1 flex-fill">
                     <b-input-group prepend="" size="sm">
+                        <!--
                         <b-input-group-append>
+                            <b-button size="sm" variant="success" @click="reload()">Reload</b-button>
+          
                             <b-dropdown size="sm" split text="Reload" variant="success" @click="syncLive()">
                                 <b-dropdown-item href="#" @click="toggleAuto()">
                                     Auto reload | <span class="font-weight-bold" :class="{'text-success':auto,'text-secondary':!auto}">{{ auto ? 'On' : 'Off' }}</span>
@@ -15,6 +18,7 @@
                                 </b-dropdown-text>
                             </b-dropdown>
                         </b-input-group-append>
+                        -->
                         <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                         <b-input-group-append>
                             <b-button @click="addVideo()">Enter</b-button>
@@ -134,7 +138,7 @@ export default {
         videos:function(){
 
             document.title = (this.videos.length ? '('+this.videos.length+') ' : '')+'Live Monitor';
-        },
+        },/*
         auto:function(){
             
             clearInterval(this.auto_interval);
@@ -146,7 +150,7 @@ export default {
                     self.syncLive();
                 },600000)
             }
-        }
+        }*/
     },
     computed:{
 
@@ -164,7 +168,7 @@ export default {
             
             this.syncLive();
 
-            this.auto = true;
+            //this.auto = true;
         }
         
     },
@@ -181,6 +185,13 @@ export default {
                 
                 arr.forEach(str=>{self.addVideo(str);})
             });
+        },
+        reload:function(){
+            
+            let url = this.hash.substr(1);
+
+            this.removeAllVideos();
+            this.addVideo(url);
         },
         addVideo:function(url){
             
@@ -203,6 +214,12 @@ export default {
 
             this.videos.splice(this.videos.indexOf(video),1);
             this.updateOrder();
+        },
+        removeAllVideos:function(){
+
+            while(this.videos.length){
+                this.videos.pop();
+            }
         },
         focusVideo:function(video){
 
