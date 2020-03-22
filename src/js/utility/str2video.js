@@ -1,5 +1,5 @@
 const yt_embed_host = "https://www.youtube-nocookie.com/embed";
-const yt_embed_channel_host = "https://www.youtube-nocookie.com/embed/live_stream?channel=";
+const yt_embed_channel_host = "https://www.youtube-nocookie.com/embed/live_stream?autoplay=1&channel=";
 const tt_embed_channel_host = "https://player.twitch.tv/?channel=";
 const fb_embed_host = "https://www.facebook.com/plugins/video.php?href=https://www.facebook.com";
 const ls_embed_host = "https://livestream.com";
