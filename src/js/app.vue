@@ -5,10 +5,9 @@
             <div class="d-flex">
                 <div class="mr-1 flex-fill">
                     <b-input-group prepend="" size="sm">
-                        <!--
                         <b-input-group-append>
                             <b-button size="sm" variant="success" @click="reload()">Reload</b-button>
-          
+                            <!--          
                             <b-dropdown size="sm" split text="Reload" variant="success" @click="syncLive()">
                                 <b-dropdown-item href="#" @click="toggleAuto()">
                                     Auto reload | <span class="font-weight-bold" :class="{'text-success':auto,'text-secondary':!auto}">{{ auto ? 'On' : 'Off' }}</span>
@@ -17,8 +16,8 @@
                                     Youtube channel live check
                                 </b-dropdown-text>
                             </b-dropdown>
+                            -->
                         </b-input-group-append>
-                        -->
                         <b-form-input v-model="url" placeholder="YouTube, Twitch, Facebook, Livestream" @keydown.enter="addVideo()"></b-form-input>
                         <b-input-group-append>
                             <b-button @click="addVideo()">Enter</b-button>
@@ -188,10 +187,14 @@ export default {
         },
         reload:function(){
             
+            let self = this;
             let url = this.hash.substr(1);
 
             this.removeAllVideos();
-            this.addVideo(url);
+
+            setTimeout(function(){
+                self.addVideo(url);
+            },500);
         },
         addVideo:function(url){
             
